@@ -1,12 +1,12 @@
-FROM alpine:latest
+FROM golang:1.19.0-alpine AS build
+RUN mkdir /unifi_exporter
+WORKDIR /unifi_exporter
+COPY  . .
+RUN go env -w GOPROXY=direct
+RUN CGO_ENABLED=0 GOOS=linux go build ./cmd/unifi_exporter
 
+FROM alpine:3
+COPY --from=build /unifi_exporter/unifi_exporter /bin
 EXPOSE 9130
-
-RUN apk add --update --virtual build-deps go git musl-dev && \
-    go get github.com/mdlayher/unifi_exporter/cmd/unifi_exporter && \
-    mv ~/go/bin/unifi_exporter /bin/ && \
-    apk del build-deps && \
-    rm -rf /var/cache/apk/* ~/go/
-
 USER nobody
 ENTRYPOINT ["/bin/unifi_exporter"]
