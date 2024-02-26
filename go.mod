@@ -1,5 +1,7 @@
 module github.com/mdlayher/unifi_exporter
 
+replace github.com/mdlayher/unifi => github.com/adriansaul/unifi v1.0.2
+
 go 1.16
 
 require (
